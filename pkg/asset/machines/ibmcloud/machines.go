@@ -92,7 +92,7 @@ func provider(clusterID string,
 		return nil, err
 	}
 
-	securityGroup, err := getSecurityGroupName(clusterID, role)
+	securityGroups, err := getSecurityGroupNames(clusterID, role)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func provider(clusterID string,
 		Zone:          az,
 		PrimaryNetworkInterface: ibmcloudprovider.NetworkInterface{
 			Subnet:         subnet,
-			SecurityGroups: []string{securityGroup},
+			SecurityGroups: securityGroups,
 		},
 		UserDataSecret:    &corev1.LocalObjectReference{Name: userDataSecret},
 		CredentialsSecret: &corev1.LocalObjectReference{Name: "ibmcloud-credentials"},
@@ -130,13 +130,20 @@ func getSubnetName(clusterID string, role string, zone string) (string, error) {
 	}
 }
 
-func getSecurityGroupName(clusterID string, role string) (string, error) {
+func getSecurityGroupNames(clusterID string, role string) ([]string, error) {
 	switch role {
 	case "master":
-		return fmt.Sprintf("%s-security-group-control-plane", clusterID), nil
+		return []string{
+			fmt.Sprintf("%s-security-group-cluster-wide", clusterID),
+			fmt.Sprintf("%s-security-group-openshift-network", clusterID),
+			fmt.Sprintf("%s-security-group-control-plane", clusterID),
+		}, nil
 	case "worker":
-		return fmt.Sprintf("%s-security-group-compute", clusterID), nil
+		return []string{
+			fmt.Sprintf("%s-security-group-cluster-wide", clusterID),
+			fmt.Sprintf("%s-security-group-openshift-network", clusterID),
+		}, nil
 	default:
-		return "", fmt.Errorf("invalid machine role %v", role)
+		return nil, fmt.Errorf("invalid machine role %v", role)
 	}
 }
