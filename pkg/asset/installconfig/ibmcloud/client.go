@@ -10,6 +10,7 @@ import (
 	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/IBM/networking-go-sdk/zonesv1"
 	"github.com/IBM/platform-services-go-sdk/iamidentityv1"
+	"github.com/IBM/platform-services-go-sdk/iampolicymanagementv1"
 	"github.com/IBM/platform-services-go-sdk/resourcecontrollerv2"
 	"github.com/IBM/platform-services-go-sdk/resourcemanagerv2"
 	"github.com/IBM/vpc-go-sdk/vpcv1"
@@ -24,6 +25,7 @@ type API interface {
 	GetCISInstance(ctx context.Context, crnstr string) (*resourcecontrollerv2.ResourceInstance, error)
 	GetDNSZones(ctx context.Context) ([]DNSZoneResponse, error)
 	GetEncryptionKey(ctx context.Context, keyCRN string) (*EncryptionKeyResponse, error)
+	GetIAMPolicies(ctx context.Context) ([]string, error)
 	GetResourceGroups(ctx context.Context) ([]resourcemanagerv2.ResourceGroup, error)
 	GetResourceGroup(ctx context.Context, nameOrID string) (*resourcemanagerv2.ResourceGroup, error)
 	GetSubnet(ctx context.Context, subnetID string) (*vpcv1.Subnet, error)
@@ -192,6 +194,50 @@ func (c *Client) GetDNSZones(ctx context.Context) ([]DNSZoneResponse, error) {
 func (c *Client) GetEncryptionKey(ctx context.Context, keyCRN string) (*EncryptionKeyResponse, error) {
 	// TODO: IBM: Call KMS / Hyperprotect Crpyto APIs.
 	return &EncryptionKeyResponse{}, nil
+}
+
+// GetIAMPolicies gets IAM policies for API key
+func (c *Client) GetIAMPolicies(ctx context.Context) ([]string, error) {
+	fmt.Println("[WIP] GetIAMPolicies")
+
+	apiKeyDetails, err := c.GetAuthenticatorAPIKeyDetails(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("[WIP] GetIAMPolicies; Account ID: %+v\n", *apiKeyDetails.AccountID)
+	fmt.Printf("[WIP] GetIAMPolicies; IAM ID: %+v\n", *apiKeyDetails.IamID)
+
+	iamIdentityService, err := iampolicymanagementv1.NewIamPolicyManagementV1(&iampolicymanagementv1.IamPolicyManagementV1Options{
+		Authenticator: c.Authenticator,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	policies, _, err := iamIdentityService.ListPoliciesWithContext(ctx, &iampolicymanagementv1.ListPoliciesOptions{
+		AccountID: apiKeyDetails.AccountID,
+		IamID:     apiKeyDetails.IamID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, policy := range policies.Policies {
+		if *policy.State != "active" {
+			continue
+		}
+		fmt.Printf("[WIP] GetIAMPolicies; Policy ID: %s\n", *policy.ID)
+		for _, resource := range policy.Resources {
+			for _, attribute := range resource.Attributes {
+				fmt.Printf("   ResourceAttribute; Name: %s\n", *attribute.Name)
+				fmt.Printf("   ResourceAttribute; Value: %s\n", *attribute.Value)
+				fmt.Printf("   ResourceAttribute: Operator: %s\n", *attribute.Operator)
+			}
+		}
+	}
+
+	return nil, nil
 }
 
 // GetZoneIDByName gets the CIS zone ID from its domain name.

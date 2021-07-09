@@ -57,9 +57,9 @@ func (a *PlatformQuotaCheck) Generate(dependencies asset.Parents) error {
 	dependencies.Get(ic, mastersAsset, workersAsset)
 
 	// TODO: IBM[#87]: Add quota checks
-	if ic.Config.Platform.Name() == typesibmcloud.Name {
-		return nil
-	}
+	// if ic.Config.Platform.Name() == typesibmcloud.Name {
+	// 	return nil
+	// }
 
 	masters, err := mastersAsset.Machines()
 	if err != nil {

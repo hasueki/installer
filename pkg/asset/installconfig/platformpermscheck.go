@@ -9,6 +9,7 @@ import (
 	"github.com/openshift/installer/pkg/asset"
 	awsconfig "github.com/openshift/installer/pkg/asset/installconfig/aws"
 	gcpconfig "github.com/openshift/installer/pkg/asset/installconfig/gcp"
+	ibmcloudconfig "github.com/openshift/installer/pkg/asset/installconfig/ibmcloud"
 	kubevirtconfig "github.com/openshift/installer/pkg/asset/installconfig/kubevirt"
 	"github.com/openshift/installer/pkg/types"
 	"github.com/openshift/installer/pkg/types/aws"
@@ -91,7 +92,14 @@ func (a *PlatformPermsCheck) Generate(dependencies asset.Parents) error {
 			return errors.Wrap(err, "failed to validate services in this project")
 		}
 	case ibmcloud.Name:
-		// TODO: IBM[#90]: platformpermscheck
+		client, err := ibmcloudconfig.NewClient()
+		if err != nil {
+			return err
+		}
+
+		if err = ibmcloudconfig.ValidatePermissions(ctx, client, ic.Config); err != nil {
+			return errors.Wrap(err, "IBM Cloud permissions validation failed")
+		}
 	case kubevirt.Name:
 		client, err := kubevirtconfig.NewClient()
 		if err != nil {

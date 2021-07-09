@@ -195,3 +195,17 @@ func validateSubnetZone(client API, subnetID string, validZones sets.String, sub
 	}
 	return allErrs
 }
+
+func ValidatePermissions(ctx context.Context, client API, ic *types.InstallConfig) error {
+	fmt.Println("[WIP] ValidatePermissions")
+
+	// Check IAM permissions for API key
+	policies, err := client.GetIAMPolicies(ctx)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("[WIP] ValidatePermissions; IAM Policies: %+v\n", policies)
+
+	return fmt.Errorf("")
+}
