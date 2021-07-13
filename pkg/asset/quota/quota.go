@@ -11,15 +11,19 @@ import (
 	"github.com/openshift/installer/pkg/asset"
 	"github.com/openshift/installer/pkg/asset/installconfig"
 	configgcp "github.com/openshift/installer/pkg/asset/installconfig/gcp"
+
+	// configibmcloud "github.com/openshift/installer/pkg/asset/installconfig/ibmcloud"
 	openstackvalidation "github.com/openshift/installer/pkg/asset/installconfig/openstack/validation"
 	"github.com/openshift/installer/pkg/asset/machines"
 	"github.com/openshift/installer/pkg/asset/quota/aws"
 	"github.com/openshift/installer/pkg/asset/quota/gcp"
+	"github.com/openshift/installer/pkg/asset/quota/ibmcloud"
 	"github.com/openshift/installer/pkg/asset/quota/openstack"
 	"github.com/openshift/installer/pkg/diagnostics"
 	"github.com/openshift/installer/pkg/quota"
 	quotaaws "github.com/openshift/installer/pkg/quota/aws"
 	quotagcp "github.com/openshift/installer/pkg/quota/gcp"
+	quotaibmcloud "github.com/openshift/installer/pkg/quota/ibmcloud"
 	typesaws "github.com/openshift/installer/pkg/types/aws"
 	"github.com/openshift/installer/pkg/types/azure"
 	"github.com/openshift/installer/pkg/types/baremetal"
@@ -55,11 +59,6 @@ func (a *PlatformQuotaCheck) Generate(dependencies asset.Parents) error {
 	mastersAsset := &machines.Master{}
 	workersAsset := &machines.Worker{}
 	dependencies.Get(ic, mastersAsset, workersAsset)
-
-	// TODO: IBM[#87]: Add quota checks
-	if ic.Config.Platform.Name() == typesibmcloud.Name {
-		return nil
-	}
 
 	masters, err := mastersAsset.Machines()
 	if err != nil {
@@ -128,8 +127,24 @@ func (a *PlatformQuotaCheck) Generate(dependencies asset.Parents) error {
 		}
 		summarizeReport(reports)
 	case typesibmcloud.Name:
+
+		client, err := ibmcloud.NewClient()
+		if err != nil {
+			return err
+		}
+
+		services := []string{"ec2", "vpc"}
+
+		q, err := quotaibmcloud.Load(context.TODO(), client, services...)
+		if quotaibmcloud.IsUnauthorized(err) {
+			logrus.Warnf("Missing permissions to fetch Quotas and therefore will skip checking them: %v, make sure you have `appropriate` permission available to the user.", err)
+			return nil
+		}
+
+		fmt.Printf("[WIP] Loaded Quotas: %+v\n", q)
+
 		// TODO: IBM[#87]: Add quota checks
-		return nil
+		return fmt.Errorf("")
 	case typesopenstack.Name:
 		ci, err := openstackvalidation.GetCloudInfo(ic.Config)
 		if err != nil {
