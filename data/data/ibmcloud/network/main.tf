@@ -66,10 +66,12 @@ module "cis" {
 module "vpc" {
   source = "./vpc"
 
-  cluster_id        = var.cluster_id
-  public_endpoints  = local.public_endpoints
-  resource_group_id = local.resource_group_id
-  region            = var.ibmcloud_region
-  tags              = local.tags
-  zone_list         = distinct(var.ibmcloud_master_availability_zones)
+  cluster_id             = var.cluster_id
+  dedicated_hosts_master = var.ibmcloud_master_dedicated_hosts
+  dedicated_hosts_worker = var.ibmcloud_worker_dedicated_hosts
+  public_endpoints       = local.public_endpoints
+  resource_group_id      = local.resource_group_id
+  region                 = var.ibmcloud_region
+  tags                   = local.tags
+  zone_list              = distinct(var.ibmcloud_master_availability_zones)
 }

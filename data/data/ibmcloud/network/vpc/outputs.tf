@@ -2,6 +2,10 @@
 # VPC module outputs
 #######################################
 
+output "control_plane_dedicated_host_id_list" {
+  value = local.dhosts_master_merged
+}
+
 output "control_plane_security_group_id_list" {
   value = [
     ibm_is_security_group.cluster_wide.id,
