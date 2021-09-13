@@ -444,6 +444,16 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			workerConfigs[i] = w.Spec.Template.Spec.ProviderSpec.Value.Object.(*ibmcloudprovider.IBMCloudMachineProviderSpec)
 		}
 
+		// Get dedicated host info
+		var masterDedicatedHosts []ibmcloud.DedicatedHost
+		if installConfig.Config.ControlPlane.Platform.IBMCloud != nil {
+			masterDedicatedHosts = installConfig.Config.ControlPlane.Platform.IBMCloud.DedicatedHosts
+		}
+		var workerDedicatedHosts []ibmcloud.DedicatedHost
+		if installConfig.Config.Compute[0].Platform.IBMCloud != nil {
+			workerDedicatedHosts = installConfig.Config.Compute[0].Platform.IBMCloud.DedicatedHosts
+		}
+
 		// Get CISInstanceCRN from InstallConfig metadata
 		crn, err := installConfig.IBMCloud.CISInstanceCRN(ctx)
 		if err != nil {
@@ -452,13 +462,15 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 
 		data, err = ibmcloudtfvars.TFVars(
 			ibmcloudtfvars.TFVarsSources{
-				Auth:              auth,
-				CISInstanceCRN:    crn,
-				ImageURL:          string(*rhcosImage),
-				MasterConfigs:     masterConfigs,
-				PublishStrategy:   installConfig.Config.Publish,
-				ResourceGroupName: installConfig.Config.Platform.IBMCloud.ResourceGroupName,
-				WorkerConfigs:     workerConfigs,
+				Auth:                 auth,
+				CISInstanceCRN:       crn,
+				ImageURL:             string(*rhcosImage),
+				MasterConfigs:        masterConfigs,
+				MasterDedicatedHosts: masterDedicatedHosts,
+				PublishStrategy:      installConfig.Config.Publish,
+				ResourceGroupName:    installConfig.Config.Platform.IBMCloud.ResourceGroupName,
+				WorkerConfigs:        workerConfigs,
+				WorkerDedicatedHosts: workerDedicatedHosts,
 			},
 		)
 		if err != nil {

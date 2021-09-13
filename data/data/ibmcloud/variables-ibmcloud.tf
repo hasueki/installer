@@ -43,6 +43,18 @@ variable "ibmcloud_image_filepath" {
 # Top-level module variables (optional)
 #######################################
 
+variable "ibmcloud_master_dedicated_hosts" {
+  type        = list(map(string))
+  description = "(optional) The list of dedicated hosts in which to create the control plane nodes."
+  default     = []
+}
+
+variable "ibmcloud_worker_dedicated_hosts" {
+  type        = list(map(string))
+  description = "(optional) The list of dedicated hosts in which to create the compute nodes."
+  default     = []
+}
+
 variable "ibmcloud_extra_tags" {
   type        = list(string)
   description = <<EOF
