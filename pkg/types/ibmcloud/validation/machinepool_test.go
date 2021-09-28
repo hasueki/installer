@@ -10,12 +10,13 @@ import (
 
 var (
 	validType            = "valid-type"
-	validZones           = []string{"zone-a", "zone-b"}
+	validZones           = []string{"us-east-1", "us-east-2"}
 	validEncryptionKey   = "crn:v1:bluemix:public:kms:global:a/accountid:service:key:keyid"
 	invalidEncryptionKey = "v1:bluemix:kms:global:a/accountid:service:key:keyid"
 )
 
 func TestValidateMachinePool(t *testing.T) {
+	platform := &ibmcloud.Platform{Region: "us-east"}
 	cases := []struct {
 		name        string
 		machinepool *ibmcloud.MachinePool
@@ -61,7 +62,7 @@ func TestValidateMachinePool(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := ValidateMachinePool(tc.machinepool, field.NewPath("test-path")).ToAggregate()
+			err := ValidateMachinePool(platform, tc.machinepool, field.NewPath("test-path")).ToAggregate()
 			if tc.valid {
 				assert.NoError(t, err)
 			} else {

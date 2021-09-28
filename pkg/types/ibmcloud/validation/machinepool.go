@@ -1,14 +1,23 @@
 package validation
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/IBM-Cloud/bluemix-go/crn"
 	"github.com/openshift/installer/pkg/types/ibmcloud"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
 // ValidateMachinePool validates the MachinePool.
-func ValidateMachinePool(mp *ibmcloud.MachinePool, path *field.Path) field.ErrorList {
+func ValidateMachinePool(platform *ibmcloud.Platform, mp *ibmcloud.MachinePool, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
+	for i, zone := range mp.Zones {
+		if !strings.HasPrefix(zone, platform.Region) {
+			allErrs = append(allErrs, field.Invalid(path.Child("zones").Index(i), zone, fmt.Sprintf("zone not in configured region (%s)", platform.Region)))
+		}
+	}
+
 	if mp.BootVolume != nil {
 		allErrs = append(allErrs, validateBootVolume(mp.BootVolume, path.Child("bootVolume"))...)
 	}
