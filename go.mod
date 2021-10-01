@@ -65,7 +65,7 @@ require (
 	github.com/openshift/client-go v0.0.0-20210409155308-a8e62c60e930
 	github.com/openshift/cloud-credential-operator v0.0.0-20200316201045-d10080b52c9e
 	github.com/openshift/cluster-api-provider-gcp v0.0.1-0.20201203141909-4dc702fd57a5
-	github.com/openshift/cluster-api-provider-ibmcloud v0.0.0-20210702173623-676faba9895d
+	github.com/openshift/cluster-api-provider-ibmcloud v0.0.0-20210925003227-c0f28b165bf7
 	github.com/openshift/cluster-api-provider-kubevirt v0.0.0-20210719100556-9b8bc3666720
 	github.com/openshift/cluster-api-provider-libvirt v0.2.1-0.20191219173431-2336783d4603
 	github.com/openshift/cluster-api-provider-ovirt v0.1.1-0.20210817084941-2262c7c6cece
@@ -164,5 +164,3 @@ replace (
 	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
 	google.golang.org/grpc => google.golang.org/grpc v1.29.1
 )
-
-replace github.com/openshift/cluster-api-provider-ibmcloud => github.com/gsrajpal/cluster-api-provider-ibmcloud v0.0.0-20210902203750-45b2104fa980

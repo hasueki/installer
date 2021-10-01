@@ -1420,7 +1420,7 @@ github.com/openshift/cluster-api/pkg/apis/machine/v1beta1
 ## explicit
 github.com/openshift/cluster-api-provider-gcp/pkg/apis
 github.com/openshift/cluster-api-provider-gcp/pkg/apis/gcpprovider/v1beta1
-# github.com/openshift/cluster-api-provider-ibmcloud v0.0.0-20210702173623-676faba9895d => github.com/gsrajpal/cluster-api-provider-ibmcloud v0.0.0-20210902203750-45b2104fa980
+# github.com/openshift/cluster-api-provider-ibmcloud v0.0.0-20210925003227-c0f28b165bf7
 ## explicit
 github.com/openshift/cluster-api-provider-ibmcloud/pkg/apis
 github.com/openshift/cluster-api-provider-ibmcloud/pkg/apis/ibmcloudprovider/v1beta1
@@ -2965,4 +2965,3 @@ sigs.k8s.io/yaml
 # google.golang.org/api => google.golang.org/api v0.25.0
 # google.golang.org/genproto => google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
 # google.golang.org/grpc => google.golang.org/grpc v1.29.1
-# github.com/openshift/cluster-api-provider-ibmcloud => github.com/gsrajpal/cluster-api-provider-ibmcloud v0.0.0-20210902203750-45b2104fa980

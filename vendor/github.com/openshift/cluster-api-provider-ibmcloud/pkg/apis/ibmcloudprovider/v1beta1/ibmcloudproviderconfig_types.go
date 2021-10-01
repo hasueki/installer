@@ -48,9 +48,6 @@ type IBMCloudMachineProviderSpec struct {
 	// Example: bx2-8x32 (8 vCPUs, 32 GB RAM)
 	Profile string `json:"profile"`
 
-	// Dedicated host
-	DedicatedHost string `json:"dedicatedHost,omitempty"`
-
 	// Region of the virtual machine
 	Region string `json:"region"`
 
