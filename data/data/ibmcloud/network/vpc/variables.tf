@@ -6,6 +6,16 @@ variable "cluster_id" {
   type = string
 }
 
+variable "dedicated_hosts_master" {
+  type    = list(map(string))
+  default = []
+}
+
+variable "dedicated_hosts_worker" {
+  type    = list(map(string))
+  default = []
+}
+
 variable "public_endpoints" {
   type = bool
 }
