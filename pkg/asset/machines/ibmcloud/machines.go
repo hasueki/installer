@@ -99,10 +99,14 @@ func provider(clusterID string,
 	}
 
 	var dedicatedHost string
-	if len(mpool.DedicatedHosts) > 0 {
-		dedicatedHost, err = getDedicatedHostNameForZone(clusterID, role, mpool.DedicatedHosts, az)
-		if err != nil {
-			return nil, err
+	if len(mpool.DedicatedHosts) == len(mpool.Zones) {
+		if mpool.DedicatedHosts[azIdx].Name != "" {
+			dedicatedHost = mpool.DedicatedHosts[azIdx].Name
+		} else {
+			dedicatedHost, err = getDedicatedHostNameForZone(clusterID, role, az)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -129,13 +133,7 @@ func provider(clusterID string,
 	}, nil
 }
 
-func getDedicatedHostNameForZone(clusterID string, role string, dhosts []ibmcloud.DedicatedHost, zone string) (string, error) {
-	for _, dhost := range dhosts {
-		if dhost.Name != "" && dhost.Zone == zone {
-			return dhost.Name, nil
-		}
-	}
-
+func getDedicatedHostNameForZone(clusterID string, role string, zone string) (string, error) {
 	switch role {
 	case "master":
 		return fmt.Sprintf("%s-dhost-control-plane-%s", clusterID, zone), nil

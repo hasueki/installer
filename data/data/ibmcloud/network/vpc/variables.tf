@@ -32,6 +32,10 @@ variable "tags" {
   type = list(string)
 }
 
-variable "zone_list" {
+variable "zones_master" {
+  type = list(string)
+}
+
+variable "zones_worker" {
   type = list(string)
 }

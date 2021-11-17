@@ -66,11 +66,9 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Profile: validType,
-						Zone:    validZones[0],
 					},
 					{
 						Profile: validType,
-						Zone:    validZones[1],
 					},
 				},
 				InstanceType: validType,
@@ -84,11 +82,9 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Name: "name",
-						Zone: validZones[0],
 					},
 					{
 						Name: "name",
-						Zone: validZones[1],
 					},
 				},
 				InstanceType: validType,
@@ -102,11 +98,9 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Name: "name",
-						Zone: validZones[0],
 					},
 					{
 						Profile: validType,
-						Zone:    validZones[1],
 					},
 				},
 				InstanceType: validType,
@@ -119,11 +113,9 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Name: "name",
-						Zone: validZones[0],
 					},
 					{
 						Profile: validType,
-						Zone:    validZones[1],
 					},
 				},
 				InstanceType: validType,
@@ -137,11 +129,6 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Name: "name",
-						Zone: validZones[1],
-					},
-					{
-						Profile: validType,
-						Zone:    validZones[0],
 					},
 				},
 				InstanceType: validType,
@@ -155,11 +142,9 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Name: "name",
-						Zone: validZones[1],
 					},
 					{
 						Profile: "invalid",
-						Zone:    validZones[0],
 					},
 				},
 				InstanceType: validType,
@@ -173,11 +158,9 @@ func TestValidateMachinePool(t *testing.T) {
 				DedicatedHosts: []ibmcloud.DedicatedHost{
 					{
 						Name: "name",
-						Zone: validZones[0],
 					},
 					{
 						Profile: validType,
-						Zone:    validZones[1],
 					},
 				},
 			},

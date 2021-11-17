@@ -73,5 +73,6 @@ module "vpc" {
   resource_group_id      = local.resource_group_id
   region                 = var.ibmcloud_region
   tags                   = local.tags
-  zone_list              = distinct(var.ibmcloud_master_availability_zones)
+  zones_master           = distinct(var.ibmcloud_master_availability_zones)
+  zones_worker           = distinct(var.ibmcloud_worker_availability_zones)
 }

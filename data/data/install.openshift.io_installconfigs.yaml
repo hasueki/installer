@@ -309,12 +309,6 @@ spec:
                                   host. If specified, new dedicated host will be created
                                   for machines.
                                 type: string
-                              zone:
-                                description: Zone is the availability zone of the
-                                  dedicated host.
-                                type: string
-                            required:
-                            - zone
                             type: object
                           type: array
                         type:
@@ -775,12 +769,6 @@ spec:
                                 host. If specified, new dedicated host will be created
                                 for machines.
                               type: string
-                            zone:
-                              description: Zone is the availability zone of the dedicated
-                                host.
-                              type: string
-                          required:
-                          - zone
                           type: object
                         type: array
                       type:
@@ -1766,12 +1754,6 @@ spec:
                                 host. If specified, new dedicated host will be created
                                 for machines.
                               type: string
-                            zone:
-                              description: Zone is the availability zone of the dedicated
-                                host.
-                              type: string
-                          required:
-                          - zone
                           type: object
                         type: array
                       type:

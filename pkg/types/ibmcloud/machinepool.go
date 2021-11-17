@@ -38,9 +38,6 @@ type DedicatedHost struct {
 	// dedicated host will be created for machines.
 	// +optional
 	Profile string `json:"profile,omitempty"`
-
-	// Zone is the availability zone of the dedicated host.
-	Zone string `json:"zone"`
 }
 
 // Set sets the values from `required` to `a`.

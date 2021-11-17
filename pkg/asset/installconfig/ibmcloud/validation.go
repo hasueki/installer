@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"strings"
 
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -70,13 +69,13 @@ func validateMachinePool(client API, platform *ibmcloud.Platform, machinePool *i
 	}
 
 	if len(machinePool.DedicatedHosts) > 0 {
-		allErrs = append(allErrs, validateMachinePoolDedicatedHosts(client, machinePool.DedicatedHosts, machinePool.InstanceType, platform.Region, path.Child("dedicatedHosts"))...)
+		allErrs = append(allErrs, validateMachinePoolDedicatedHosts(client, machinePool.DedicatedHosts, machinePool.InstanceType, machinePool.Zones, platform.Region, path.Child("dedicatedHosts"))...)
 	}
 
 	return allErrs
 }
 
-func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHost, machineType string, region string, path *field.Path) field.ErrorList {
+func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHost, machineType string, zones []string, region string, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// Get list of supported profiles in region
@@ -99,9 +98,9 @@ func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHo
 					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, "dedicated host is unable to provision instances"))
 				}
 
-				// Check if host is in region
-				if !strings.HasPrefix(*dh.Zone.Name, region) {
-					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, fmt.Sprintf("dedicated host not in region %s", region)))
+				// Check if host is in zone
+				if *dh.Zone.Name != zones[i] {
+					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, fmt.Sprintf("dedicated host not in zone %s", zones[i])))
 				}
 
 				// Check if host profile supports machine type

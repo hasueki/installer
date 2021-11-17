@@ -57,18 +57,6 @@ func validateDedicatedHosts(dhosts []ibmcloud.DedicatedHost, itype string, zones
 			allErrs = append(allErrs, field.Invalid(path.Index(i), dhost.Profile, "name or profile must be set"))
 		}
 
-		// Dedicated host zone is required
-		if dhost.Zone == "" {
-			allErrs = append(allErrs, field.Invalid(path.Index(i).Child("zone"), dhost.Zone, "zone must be set"))
-		}
-
-		// Dedicated host zone must match platform zone
-		if len(dhosts) == len(zones) {
-			if dhost.Zone != zones[i] {
-				allErrs = append(allErrs, field.Invalid(path.Index(i).Child("zone"), dhost.Zone, fmt.Sprintf("zone does not match expected zone (%s)", zones[i])))
-			}
-		}
-
 		// Instance type must be in the same profile family as dedicated host
 		if dhost.Profile != "" && itype != "" {
 			if strings.Split(dhost.Profile, "-")[0] != strings.Split(itype, "-")[0] {

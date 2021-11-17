@@ -19,7 +19,6 @@ type Auth struct {
 type DedicatedHost struct {
 	ID      string `json:"id,omitempty"`
 	Profile string `json:"profile,omitempty"`
-	Zone    string `json:"zone"`
 }
 
 type config struct {
@@ -29,6 +28,7 @@ type config struct {
 	CISInstanceCRN          string          `json:"ibmcloud_cis_crn,omitempty"`
 	ExtraTags               []string        `json:"ibmcloud_extra_tags,omitempty"`
 	MasterAvailabilityZones []string        `json:"ibmcloud_master_availability_zones"`
+	WorkerAvailabilityZones []string        `json:"ibmcloud_worker_availability_zones"`
 	MasterInstanceType      string          `json:"ibmcloud_master_instance_type,omitempty"`
 	MasterDedicatedHosts    []DedicatedHost `json:"ibmcloud_master_dedicated_hosts,omitempty"`
 	WorkerDedicatedHosts    []DedicatedHost `json:"ibmcloud_worker_dedicated_hosts,omitempty"`
@@ -58,10 +58,13 @@ func TFVars(sources TFVarsSources) ([]byte, error) {
 	}
 
 	masterConfig := sources.MasterConfigs[0]
-	// workerConfig := sources.WorkerConfigs[0]
 	masterAvailabilityZones := make([]string, len(sources.MasterConfigs))
 	for i, c := range sources.MasterConfigs {
 		masterAvailabilityZones[i] = c.Zone
+	}
+	workerAvailabilityZones := make([]string, len(sources.WorkerConfigs))
+	for i, c := range sources.WorkerConfigs {
+		workerAvailabilityZones[i] = c.Zone
 	}
 
 	cfg := &config{
@@ -75,6 +78,7 @@ func TFVars(sources TFVarsSources) ([]byte, error) {
 		PublishStrategy:         string(sources.PublishStrategy),
 		Region:                  masterConfig.Region,
 		ResourceGroupName:       sources.ResourceGroupName,
+		WorkerAvailabilityZones: workerAvailabilityZones,
 		WorkerDedicatedHosts:    sources.WorkerDedicatedHosts,
 
 		// TODO: IBM: Future support

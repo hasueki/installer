@@ -457,13 +457,11 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 						return err
 					}
 					masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
-						ID:   *dh.ID,
-						Zone: dhost.Zone,
+						ID: *dh.ID,
 					})
 				} else {
 					masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
 						Profile: dhost.Profile,
-						Zone:    dhost.Zone,
 					})
 				}
 			}
@@ -479,13 +477,11 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 						return err
 					}
 					workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
-						ID:   *dh.ID,
-						Zone: dhost.Zone,
+						ID: *dh.ID,
 					})
 				} else {
 					workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
 						Profile: dhost.Profile,
-						Zone:    dhost.Zone,
 					})
 				}
 			}
