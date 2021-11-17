@@ -23,7 +23,7 @@ import (
 type API interface {
 	GetAuthenticatorAPIKeyDetails(ctx context.Context) (*iamidentityv1.APIKey, error)
 	GetCISInstance(ctx context.Context, crnstr string) (*resourcecontrollerv2.ResourceInstance, error)
-	GetDedicatedHostByID(ctx context.Context, id string, region string) (*vpcv1.DedicatedHost, error)
+	GetDedicatedHostByName(ctx context.Context, name string, region string) (*vpcv1.DedicatedHost, error)
 	GetDedicatedHostProfiles(ctx context.Context, region string) ([]vpcv1.DedicatedHostProfile, error)
 	GetDNSRecordsByName(ctx context.Context, crnstr string, zoneID string, recordName string) ([]dnsrecordsv1.DnsrecordDetails, error)
 	GetDNSZoneIDByName(ctx context.Context, name string) (string, error)
@@ -147,20 +147,26 @@ func (c *Client) GetCISInstance(ctx context.Context, crnstr string) (*resourceco
 	return resourceInstance, nil
 }
 
-// GetDedicatedHostByID gets dedicated host by ID.
-func (c *Client) GetDedicatedHostByID(ctx context.Context, id string, region string) (*vpcv1.DedicatedHost, error) {
+// GetDedicatedHostByName gets dedicated host by name.
+func (c *Client) GetDedicatedHostByName(ctx context.Context, name string, region string) (*vpcv1.DedicatedHost, error) {
 	err := c.setVPCServiceURLForRegion(ctx, region)
 	if err != nil {
 		return nil, err
 	}
 
-	getDedicatedHostOptions := c.vpcAPI.NewGetDedicatedHostOptions(id)
-	dhost, _, err := c.vpcAPI.GetDedicatedHostWithContext(ctx, getDedicatedHostOptions)
+	options := c.vpcAPI.NewListDedicatedHostsOptions()
+	dhosts, _, err := c.vpcAPI.ListDedicatedHostsWithContext(ctx, options)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get dedicated host")
+		return nil, errors.Wrap(err, "failed to list dedicated hosts")
 	}
 
-	return dhost, nil
+	for _, dhost := range dhosts.DedicatedHosts {
+		if *dhost.Name == name {
+			return &dhost, nil
+		}
+	}
+
+	return nil, fmt.Errorf("dedicated host %q not found", name)
 }
 
 // GetDedicatedHostProfiles gets a list of profiles supported in a region.

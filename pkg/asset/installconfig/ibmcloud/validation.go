@@ -86,27 +86,27 @@ func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHo
 	}
 
 	for i, dhost := range dhosts {
-		if dhost.ID != "" {
-			// Check if host with id exists
-			dh, err := client.GetDedicatedHostByID(context.TODO(), dhost.ID, region)
+		if dhost.Name != "" {
+			// Check if host with name exists
+			dh, err := client.GetDedicatedHostByName(context.TODO(), dhost.Name, region)
 			if err != nil {
-				allErrs = append(allErrs, field.InternalError(path.Index(i).Child("id"), err))
+				allErrs = append(allErrs, field.InternalError(path.Index(i).Child("name"), err))
 			}
 
 			if dh != nil {
 				// Check if instance is provisionable on host
 				if !*dh.InstancePlacementEnabled || !*dh.Provisionable {
-					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("id"), dhost.ID, "dedicated host is unable to provision instances"))
+					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, "dedicated host is unable to provision instances"))
 				}
 
 				// Check if host is in region
 				if !strings.HasPrefix(*dh.Zone.Name, region) {
-					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("id"), dhost.ID, fmt.Sprintf("dedicated host not in region %s", region)))
+					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, fmt.Sprintf("dedicated host not in region %s", region)))
 				}
 
-				// Check if host profile suppports machine type
+				// Check if host profile supports machine type
 				if !isNamePresentInListItems(machineType, dh.SupportedInstanceProfiles) {
-					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("id"), dhost.ID, fmt.Sprintf("dedicated host does not support machine type %s", machineType)))
+					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, fmt.Sprintf("dedicated host does not support machine type %s", machineType)))
 				}
 			}
 		} else {
@@ -115,7 +115,7 @@ func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHo
 				allErrs = append(allErrs, field.Invalid(path.Index(i).Child("profile"), dhost.Profile, fmt.Sprintf("dedicated host profile not supported in region %s", region)))
 			}
 
-			// Check if host profile suppports machine type
+			// Check if host profile supports machine type
 			for _, profile := range dhostProfiles {
 				if *profile.Name == dhost.Profile {
 					if !isNamePresentInListItems(machineType, profile.SupportedInstanceProfiles) {

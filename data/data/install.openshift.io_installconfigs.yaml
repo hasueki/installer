@@ -299,9 +299,9 @@ spec:
                             description: DedicatedHost stores the configuration for
                               the machine's dedicated host platform.
                             properties:
-                              id:
-                                description: ID is the ID of the dedicated host to
-                                  provision the machine on. If specified, machines
+                              name:
+                                description: Name is the name of the dedicated host
+                                  to provision the machine on. If specified, machines
                                   will be created on pre-existing dedicated host.
                                 type: string
                               profile:
@@ -765,10 +765,10 @@ spec:
                           description: DedicatedHost stores the configuration for
                             the machine's dedicated host platform.
                           properties:
-                            id:
-                              description: ID is the ID of the dedicated host to provision
-                                the machine on. If specified, machines will be created
-                                on pre-existing dedicated host.
+                            name:
+                              description: Name is the name of the dedicated host
+                                to provision the machine on. If specified, machines
+                                will be created on pre-existing dedicated host.
                               type: string
                             profile:
                               description: Profile is the profile ID for the dedicated
@@ -1756,10 +1756,10 @@ spec:
                           description: DedicatedHost stores the configuration for
                             the machine's dedicated host platform.
                           properties:
-                            id:
-                              description: ID is the ID of the dedicated host to provision
-                                the machine on. If specified, machines will be created
-                                on pre-existing dedicated host.
+                            name:
+                              description: Name is the name of the dedicated host
+                                to provision the machine on. If specified, machines
+                                will be created on pre-existing dedicated host.
                               type: string
                             profile:
                               description: Profile is the profile ID for the dedicated

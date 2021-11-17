@@ -447,14 +447,48 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			workerConfigs[i] = w.Spec.Template.Spec.ProviderSpec.Value.Object.(*ibmcloudprovider.IBMCloudMachineProviderSpec)
 		}
 
-		// Get dedicated host info
-		var masterDedicatedHosts []ibmcloud.DedicatedHost
+		// Get master dedicated host info
+		var masterDedicatedHosts []ibmcloudtfvars.DedicatedHost
 		if installConfig.Config.ControlPlane.Platform.IBMCloud != nil {
-			masterDedicatedHosts = installConfig.Config.ControlPlane.Platform.IBMCloud.DedicatedHosts
+			for _, dhost := range installConfig.Config.ControlPlane.Platform.IBMCloud.DedicatedHosts {
+				if dhost.Name != "" {
+					dh, err := client.GetDedicatedHostByName(ctx, dhost.Name, installConfig.Config.Platform.IBMCloud.Region)
+					if err != nil {
+						return err
+					}
+					masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+						ID:   *dh.ID,
+						Zone: dhost.Zone,
+					})
+				} else {
+					masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+						Profile: dhost.Profile,
+						Zone:    dhost.Zone,
+					})
+				}
+			}
 		}
-		var workerDedicatedHosts []ibmcloud.DedicatedHost
+
+		// Get worker dedicated host info
+		var workerDedicatedHosts []ibmcloudtfvars.DedicatedHost
 		if installConfig.Config.Compute[0].Platform.IBMCloud != nil {
-			workerDedicatedHosts = installConfig.Config.Compute[0].Platform.IBMCloud.DedicatedHosts
+			for _, dhost := range installConfig.Config.Compute[0].Platform.IBMCloud.DedicatedHosts {
+				if dhost.Name != "" {
+					dh, err := client.GetDedicatedHostByName(ctx, dhost.Name, installConfig.Config.Platform.IBMCloud.Region)
+					if err != nil {
+						return err
+					}
+					workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+						ID:   *dh.ID,
+						Zone: dhost.Zone,
+					})
+				} else {
+					workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+						Profile: dhost.Profile,
+						Zone:    dhost.Zone,
+					})
+				}
+			}
 		}
 
 		// Get CISInstanceCRN from InstallConfig metadata

@@ -1,13 +1,10 @@
 package ibmcloud
 
 import (
-	"context"
 	"fmt"
-	"strings"
 
 	machineapi "github.com/openshift/api/machine/v1beta1"
 	ibmcloudprovider "github.com/openshift/cluster-api-provider-ibmcloud/pkg/apis/ibmcloudprovider/v1beta1"
-	ibmcloudconfig "github.com/openshift/installer/pkg/asset/installconfig/ibmcloud"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -133,41 +130,20 @@ func provider(clusterID string,
 }
 
 func getDedicatedHostNameForZone(clusterID string, role string, dhosts []ibmcloud.DedicatedHost, zone string) (string, error) {
-	var defaultName string
+	for _, dhost := range dhosts {
+		if dhost.Name != "" && dhost.Zone == zone {
+			return dhost.Name, nil
+		}
+	}
+
 	switch role {
 	case "master":
-		defaultName = fmt.Sprintf("%s-dhost-control-plane-%s", clusterID, zone)
+		return fmt.Sprintf("%s-dhost-control-plane-%s", clusterID, zone), nil
 	case "worker":
-		defaultName = fmt.Sprintf("%s-dhost-compute-%s", clusterID, zone)
+		return fmt.Sprintf("%s-dhost-compute-%s", clusterID, zone), nil
 	default:
 		return "", fmt.Errorf("invalid machine role %v", role)
 	}
-
-	for _, dhost := range dhosts {
-		if dhost.Zone == zone {
-			return defaultName, nil
-		}
-	}
-
-	client, err := ibmcloudconfig.NewClient()
-	if err != nil {
-		return "", err
-	}
-
-	for _, dhost := range dhosts {
-		if dhost.ID != "" {
-			dh, err := client.GetDedicatedHostByID(context.TODO(), dhost.ID, strings.Join(strings.Split(zone, "-")[:2], "-"))
-			if err != nil {
-				return "", err
-			}
-
-			if *dh.Zone.Name == zone {
-				return *dh.Name, nil
-			}
-		}
-	}
-
-	return "", fmt.Errorf("cannot find dedicated host for zone %v", zone)
 }
 
 func getSubnetName(clusterID string, role string, zone string) (string, error) {

@@ -115,19 +115,19 @@ func (mr *MockAPIMockRecorder) GetDNSZones(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDNSZones", reflect.TypeOf((*MockAPI)(nil).GetDNSZones), ctx)
 }
 
-// GetDedicatedHostByID mocks base method.
-func (m *MockAPI) GetDedicatedHostByID(ctx context.Context, id, region string) (*vpcv1.DedicatedHost, error) {
+// GetDedicatedHostByName mocks base method.
+func (m *MockAPI) GetDedicatedHostByName(ctx context.Context, name, region string) (*vpcv1.DedicatedHost, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDedicatedHostByID", ctx, id, region)
+	ret := m.ctrl.Call(m, "GetDedicatedHostByName", ctx, name, region)
 	ret0, _ := ret[0].(*vpcv1.DedicatedHost)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetDedicatedHostByID indicates an expected call of GetDedicatedHostByID.
-func (mr *MockAPIMockRecorder) GetDedicatedHostByID(ctx, id, region interface{}) *gomock.Call {
+// GetDedicatedHostByName indicates an expected call of GetDedicatedHostByName.
+func (mr *MockAPIMockRecorder) GetDedicatedHostByName(ctx, name, region interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDedicatedHostByID", reflect.TypeOf((*MockAPI)(nil).GetDedicatedHostByID), ctx, id, region)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDedicatedHostByName", reflect.TypeOf((*MockAPI)(nil).GetDedicatedHostByName), ctx, name, region)
 }
 
 // GetDedicatedHostProfiles mocks base method.

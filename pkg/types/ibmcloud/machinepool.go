@@ -29,10 +29,10 @@ type BootVolume struct {
 
 // DedicatedHost stores the configuration for the machine's dedicated host platform.
 type DedicatedHost struct {
-	// ID is the ID of the dedicated host to provision the machine on. If
+	// Name is the name of the dedicated host to provision the machine on. If
 	// specified, machines will be created on pre-existing dedicated host.
 	// +optional
-	ID string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 
 	// Profile is the profile ID for the dedicated host. If specified, new
 	// dedicated host will be created for machines.

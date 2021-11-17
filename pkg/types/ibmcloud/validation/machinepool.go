@@ -52,9 +52,9 @@ func validateDedicatedHosts(dhosts []ibmcloud.DedicatedHost, itype string, zones
 	}
 
 	for i, dhost := range dhosts {
-		// Dedicated host ID or profile is required
-		if dhost.ID == "" && dhost.Profile == "" {
-			allErrs = append(allErrs, field.Invalid(path.Index(i), dhost.Profile, "id or profile must be set"))
+		// Dedicated host name or profile is required
+		if dhost.Name == "" && dhost.Profile == "" {
+			allErrs = append(allErrs, field.Invalid(path.Index(i), dhost.Profile, "name or profile must be set"))
 		}
 
 		// Dedicated host zone is required
