@@ -1,8 +1,9 @@
 locals {
+  prefix               = var.cluster_id
   dhosts_master_create = [for dhost in var.dedicated_hosts_master : dhost if lookup(dhost, "id", "") == ""]
-  dhosts_master_zones = [for i, dhost in var.dedicated_hosts_master : var.zones_master[i] if lookup(dhost, "id", "") == ""]
+  dhosts_master_zones  = [for i, dhost in var.dedicated_hosts_master : var.zones_master[i] if lookup(dhost, "id", "") == ""]
   dhosts_worker_create = [for dhost in var.dedicated_hosts_worker : dhost if lookup(dhost, "id", "") == ""]
-  dhosts_worker_zones = [for i, dhost in var.dedicated_hosts_worker : var.zones_worker[i] if lookup(dhost, "id", "") == ""]
+  dhosts_worker_zones  = [for i, dhost in var.dedicated_hosts_worker : var.zones_worker[i] if lookup(dhost, "id", "") == ""]
   dhosts_master_merged = [
     for i, dhost in var.dedicated_hosts_master :
     lookup(dhost, "id", "") == ""

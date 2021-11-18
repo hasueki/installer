@@ -3,7 +3,7 @@
 #######################################
 
 output "control_plane_dedicated_host_id_list" {
-  value = module.vpc.control_plane_dedicated_host_id_list
+  value = module.dhost.control_plane_dedicated_host_id_list
 }
 
 output "control_plane_security_group_id_list" {
