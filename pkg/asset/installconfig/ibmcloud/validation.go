@@ -2,13 +2,13 @@ package ibmcloud
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation/field"
+
+	"github.com/IBM/vpc-go-sdk/vpcv1"
 
 	"github.com/openshift/installer/pkg/types"
 	"github.com/openshift/installer/pkg/types/ibmcloud"
@@ -104,20 +104,20 @@ func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHo
 				}
 
 				// Check if host profile supports machine type
-				if !isNamePresentInListItems(machineType, dh.SupportedInstanceProfiles) {
+				if !isInstanceProfileInList(machineType, dh.SupportedInstanceProfiles) {
 					allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), dhost.Name, fmt.Sprintf("dedicated host does not support machine type %s", machineType)))
 				}
 			}
 		} else {
 			// Check if host profile is supported in region
-			if !isNamePresentInListItems(dhost.Profile, dhostProfiles) {
+			if !isDedicatedHostProfileInList(dhost.Profile, dhostProfiles) {
 				allErrs = append(allErrs, field.Invalid(path.Index(i).Child("profile"), dhost.Profile, fmt.Sprintf("dedicated host profile not supported in region %s", region)))
 			}
 
 			// Check if host profile supports machine type
 			for _, profile := range dhostProfiles {
 				if *profile.Name == dhost.Profile {
-					if !isNamePresentInListItems(machineType, profile.SupportedInstanceProfiles) {
+					if !isInstanceProfileInList(machineType, profile.SupportedInstanceProfiles) {
 						allErrs = append(allErrs, field.Invalid(path.Index(i).Child("profile"), dhost.Profile, fmt.Sprintf("dedicated host profile does not support machine type %s", machineType)))
 						break
 					}
@@ -129,18 +129,18 @@ func validateMachinePoolDedicatedHosts(client API, dhosts []ibmcloud.DedicatedHo
 	return allErrs
 }
 
-func isNamePresentInListItems(name string, data interface{}) bool {
-	list := reflect.ValueOf(data)
-	for i := 0; i < list.Len(); i++ {
-		raw, err := json.Marshal(list.Index(i).Interface())
-		if err != nil {
-			return false
+func isInstanceProfileInList(profile string, list []vpcv1.InstanceProfileReference) bool {
+	for _, each := range list {
+		if *each.Name == profile {
+			return true
 		}
+	}
+	return false
+}
 
-		var decoded map[string]string
-		_ = json.Unmarshal(raw, &decoded)
-
-		if decoded["name"] == name {
+func isDedicatedHostProfileInList(profile string, list []vpcv1.DedicatedHostProfile) bool {
+	for _, each := range list {
+		if *each.Name == profile {
 			return true
 		}
 	}
