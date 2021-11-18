@@ -447,43 +447,53 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			workerConfigs[i] = w.Spec.Template.Spec.ProviderSpec.Value.Object.(*ibmcloudprovider.IBMCloudMachineProviderSpec)
 		}
 
+		// Set machine pool info
+		var masterMachinePool ibmcloud.MachinePool
+		var workerMachinePool ibmcloud.MachinePool
+		if installConfig.Config.Platform.IBMCloud.DefaultMachinePlatform != nil {
+			masterMachinePool.Set(installConfig.Config.Platform.IBMCloud.DefaultMachinePlatform)
+			workerMachinePool.Set(installConfig.Config.Platform.IBMCloud.DefaultMachinePlatform)
+		}
+		if installConfig.Config.ControlPlane.Platform.IBMCloud != nil {
+			masterMachinePool.Set(installConfig.Config.ControlPlane.Platform.IBMCloud)
+		}
+		if installConfig.Config.Compute[0].Platform.IBMCloud != nil {
+			workerMachinePool.Set(installConfig.Config.Compute[0].Platform.IBMCloud)
+		}
+
 		// Get master dedicated host info
 		var masterDedicatedHosts []ibmcloudtfvars.DedicatedHost
-		if installConfig.Config.ControlPlane.Platform.IBMCloud != nil {
-			for _, dhost := range installConfig.Config.ControlPlane.Platform.IBMCloud.DedicatedHosts {
-				if dhost.Name != "" {
-					dh, err := client.GetDedicatedHostByName(ctx, dhost.Name, installConfig.Config.Platform.IBMCloud.Region)
-					if err != nil {
-						return err
-					}
-					masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
-						ID: *dh.ID,
-					})
-				} else {
-					masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
-						Profile: dhost.Profile,
-					})
+		for _, dhost := range masterMachinePool.DedicatedHosts {
+			if dhost.Name != "" {
+				dh, err := client.GetDedicatedHostByName(ctx, dhost.Name, installConfig.Config.Platform.IBMCloud.Region)
+				if err != nil {
+					return err
 				}
+				masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+					ID: *dh.ID,
+				})
+			} else {
+				masterDedicatedHosts = append(masterDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+					Profile: dhost.Profile,
+				})
 			}
 		}
 
 		// Get worker dedicated host info
 		var workerDedicatedHosts []ibmcloudtfvars.DedicatedHost
-		if installConfig.Config.Compute[0].Platform.IBMCloud != nil {
-			for _, dhost := range installConfig.Config.Compute[0].Platform.IBMCloud.DedicatedHosts {
-				if dhost.Name != "" {
-					dh, err := client.GetDedicatedHostByName(ctx, dhost.Name, installConfig.Config.Platform.IBMCloud.Region)
-					if err != nil {
-						return err
-					}
-					workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
-						ID: *dh.ID,
-					})
-				} else {
-					workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
-						Profile: dhost.Profile,
-					})
+		for _, dhost := range workerMachinePool.DedicatedHosts {
+			if dhost.Name != "" {
+				dh, err := client.GetDedicatedHostByName(ctx, dhost.Name, installConfig.Config.Platform.IBMCloud.Region)
+				if err != nil {
+					return err
 				}
+				workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+					ID: *dh.ID,
+				})
+			} else {
+				workerDedicatedHosts = append(workerDedicatedHosts, ibmcloudtfvars.DedicatedHost{
+					Profile: dhost.Profile,
+				})
 			}
 		}
 
