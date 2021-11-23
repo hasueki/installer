@@ -457,8 +457,8 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 		if installConfig.Config.ControlPlane.Platform.IBMCloud != nil {
 			masterMachinePool.Set(installConfig.Config.ControlPlane.Platform.IBMCloud)
 		}
-		if installConfig.Config.Compute[0].Platform.IBMCloud != nil {
-			workerMachinePool.Set(installConfig.Config.Compute[0].Platform.IBMCloud)
+		if worker := installConfig.Config.WorkerMachinePool(); worker != nil {
+			workerMachinePool.Set(worker.Platform.IBMCloud)
 		}
 
 		// Get master dedicated host info

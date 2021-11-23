@@ -5,10 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/IBM/vpc-go-sdk/vpcv1"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/IBM/vpc-go-sdk/vpcv1"
 
 	"github.com/openshift/installer/pkg/types"
 	"github.com/openshift/installer/pkg/types/ibmcloud"
